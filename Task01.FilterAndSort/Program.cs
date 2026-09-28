@@ -15,7 +15,7 @@ catch (NotImplementedException ex)
 
 static IEnumerable<string> Solve(IReadOnlyList<Product> products)
 {
-    throw new NotImplementedException("Complete the Solve method. The assignment is in LinqPracticeTasks.pdf.");
+    return products.Where(p => p.Category == "Book" && p.InStock == true && p.Price < 25).OrderBy(p => p.Price).ThenBy(p => p.Name).Select(p => p.Name);
 }
 
 static string Format(IEnumerable<string> names) =>
