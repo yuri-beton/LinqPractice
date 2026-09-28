@@ -15,7 +15,8 @@ catch (NotImplementedException ex)
 
 static IEnumerable<OrderLine> Solve(IReadOnlyList<Customer> customers, IReadOnlyList<Order> orders)
 {
-    throw new NotImplementedException("Complete the Solve method. The assignment is in LinqPracticeTasks.pdf.");
+    return customers.Join(orders, c => c.Id, o => o.CustomerId, (c, o) => new OrderLine(c.Name, c.City, o.Product, o.Amount))
+        .Where(c => (c.City == "Oslo" || c.City == "Bergen") && c.Amount >= 100).OrderBy(c => c.City).ThenBy(c => c.Customer).ThenByDescending(c => c.Amount);
 }
 
 static string Format(IEnumerable<OrderLine> lines) =>
