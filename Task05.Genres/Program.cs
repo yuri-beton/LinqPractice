@@ -16,7 +16,25 @@ catch (NotImplementedException ex)
 
 static IEnumerable<GenreReport> Solve(IReadOnlyList<Book> books, IReadOnlyList<Loan> loans)
 {
-    throw new NotImplementedException("Complete the Solve method. The assignment is in LinqPracticeTasks.pdf.");
+    return loans.Join(books, l => l.BookId, b => b.Id, (l, b) => new
+    {
+        Id = b.Id,
+        Title = b.Title,
+        Genre = b.Genre,
+        Member = l.Member,
+        DaysOverdue = l.DaysOverdue
+    })
+    .GroupBy(b => b.Genre)
+    .Select(g => new GenreReport
+    (
+        g.Key,
+        g.Select(b => b.Member).Distinct().Count(),
+        Math.Round((decimal)g.Average(b => b.DaysOverdue), 2, MidpointRounding.AwayFromZero),
+        g.Where(b => b.DaysOverdue == g.Max(b => b.DaysOverdue)).OrderBy(b => b.Title).Select(b => b.Title).First()
+    ))
+    .Where(r => r.MemberCount >= 2 && r.AverageOverdue > 1)
+    .OrderByDescending(r => r.AverageOverdue)
+    .ThenBy(r => r.Genre);
 }
 
 static string Format(IEnumerable<GenreReport> reports) =>
