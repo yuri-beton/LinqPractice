@@ -15,7 +15,8 @@ catch (NotImplementedException ex)
 
 static IEnumerable<AgentLoad> Solve(IReadOnlyList<Ticket> tickets)
 {
-    throw new NotImplementedException("Complete the Solve method. The assignment is in LinqPracticeTasks.pdf.");
+    return tickets.GroupBy(t => t.Agent).Select(g => new AgentLoad(g.Key, g.Count(), g.Sum(t => t.Hours), g.Count(t => t.Priority == "High")))
+        .OrderByDescending(a => a.Hours).ThenBy(a => a.Agent);
 }
 
 static string Format(IEnumerable<AgentLoad> loads) =>
