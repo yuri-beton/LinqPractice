@@ -16,7 +16,13 @@ catch (NotImplementedException ex)
 
 static PayrollSnapshot Solve(IReadOnlyList<Employee> employees)
 {
-    throw new NotImplementedException("Complete the Solve method. The assignment is in LinqPracticeTasks.pdf.");
+    var salesDepartment = employees.Where(e => e.Department == "Sales");
+    var count = salesDepartment.Count();
+    var total = salesDepartment.Sum(e => e.Salary);
+    var average = salesDepartment.Average(e => e.Salary);
+    var lowestPaid = salesDepartment.OrderBy(e => e.Salary).ThenBy(e => e.Name).Select(e => e.Name).First();
+
+    return new PayrollSnapshot(count, total, Math.Round(average, 2, MidpointRounding.AwayFromZero), lowestPaid);
 }
 
 static string Format(PayrollSnapshot snapshot) =>
