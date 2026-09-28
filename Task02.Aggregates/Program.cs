@@ -16,13 +16,15 @@ catch (NotImplementedException ex)
 
 static PayrollSnapshot Solve(IReadOnlyList<Employee> employees)
 {
-    var salesDepartment = employees.Where(e => e.Department == "Sales");
-    var count = salesDepartment.Count();
-    var total = salesDepartment.Sum(e => e.Salary);
-    var average = salesDepartment.Average(e => e.Salary);
-    var lowestPaid = salesDepartment.OrderBy(e => e.Salary).ThenBy(e => e.Name).Select(e => e.Name).First();
-
-    return new PayrollSnapshot(count, total, Math.Round(average, 2, MidpointRounding.AwayFromZero), lowestPaid);
+    return employees.GroupBy(e => e.Department)
+        .Where(e => e.Key == "Sales")
+        .Select(g => new PayrollSnapshot
+        (
+            g.Count(), 
+            g.Sum(e => e.Salary), 
+            g.Average(e => e.Salary), 
+            g.OrderBy(e => e.Salary).ThenBy(e => e.Name).Select(e => e.Name).First())
+        ).First();
 }
 
 static string Format(PayrollSnapshot snapshot) =>
